@@ -9,7 +9,7 @@ Modified: September 12, 2021
 import sys
 
 def convert_img_to_cstr(img_name, img_bytes):
-    result = f"char {img_name}[{len(img_bytes)}] = " + "{"
+    result = f"unsigned char {img_name}[{len(img_bytes)}] = " + "{"
     breakline = 10
 
     for i, byte in enumerate(img_bytes):

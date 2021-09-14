@@ -3,7 +3,7 @@
 """
 Author:   VPR
 Created:  September 13, 2021
-Modified: September 13, 2021
+Modified: September 14, 2021
 """
 
 import os
@@ -31,7 +31,7 @@ def init_parser() -> ArgumentParser:
 
     return parser
 
-def handle_parser(ArgumentParser: parser) -> Tuple[Namespace, int]:
+def handle_parser(parser: ArgumentParser) -> Tuple[Namespace, int]:
     operations = 0
     args = parser.parse_args()
 
@@ -51,7 +51,7 @@ def get_arch() -> str:
     elif "Linux" in os.uname().machine:
         return "Linux"
 
-def copy_clipboard(str: arch, Namespace: args, int: operations) -> NoReturn:
+def copy_clipboard(arch: str, args: Namespace, operations: int) -> NoReturn:
     stdout = b""
     if arch == "WSL":
         p = subprocess.Popen(f"Get-Clipboard", 1024, "/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe",
@@ -84,7 +84,6 @@ def copy_clipboard(str: arch, Namespace: args, int: operations) -> NoReturn:
             f.write(stdout)
 
 if __name__ == "__main__":
-    # Initialize parser
     parser = init_parser()
     args, operations = handle_parser(parser)
 

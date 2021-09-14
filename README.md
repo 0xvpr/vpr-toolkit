@@ -8,6 +8,6 @@ A collection of various tools & utilities related to hacking
 
 #### TODO
 - Demos
-    - img2cstr
-    - ascii2dec
-    - prettypaste
+    - [ ] img2cstr
+    - [ ] ascii2dec
+    - [ ] prettypaste

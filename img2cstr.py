@@ -3,30 +3,30 @@
 """
 Author:   VPR
 Created:  September 12, 2021
-Modified: September 12, 2021
+Modified: September 14, 2021
 """
 
 import sys
 
-def convert_img_to_cstr(img_name, img_bytes):
+from typing import NoReturn
+from typing import ByteString
+
+def convert_img_to_cstr(img_name: str, img_bytes: ByteString) -> str:
     result = f"unsigned char {img_name}[{len(img_bytes)}] = " + "{"
     breakline = 10
 
     for i, byte in enumerate(img_bytes):
         if (i % breakline) == 0:
             result += "\n    "
-
         if byte <= 0xF:
             result += "0x0" + hex(byte)[2:].upper()
         else:
             result += "0x" + hex(byte)[2:].upper()
-
         result += ", "
-
 
     return result[:-2] + "\n};"
 
-def display_usage(exit_code):
+def display_usage(exit_code: int) -> NoReturn:
     if exit_code == 1:
         sys.stderr.write(f"Usage: {sys.argv[0]} \"path/to/image\"\n\n")
     if exit_code == 2:
@@ -34,7 +34,7 @@ def display_usage(exit_code):
 
     sys.stderr.write(f"Exited with exit code: {exit_code}.")
 
-def main():
+if __name__ == "__main__":
     img_path = ""
     img_name = ""
 
@@ -52,9 +52,7 @@ def main():
             assert (len(img_bytes) > 1)
     except:
         display_usage(2)
+        sys.exit(2)
 
     result = convert_img_to_cstr(img_name, img_bytes)
     print(result)
-
-if __name__ == "__main__":
-    main()

@@ -7,6 +7,7 @@ A collection of various tools & utilities related to hacking
 - Clipboard pasting utility
 
 #### TODO
-- prettypaste
-    - [ ] Add support for Windows
-    - [ ] Add support for Linux (Native)
+- Demos
+    - img2cstr
+    - ascii2dec
+    - prettypaste

@@ -121,6 +121,10 @@ def get_clipboard_contents(arch: str, operations: int) -> List[str]:
         stdout, _ = p.communicate()
         p.wait()
 
+    else:
+        sys.stderr.write(f"Unsupported OS: {platform.system}\n\nExit code: 1")
+        sys.exit(1)
+
     # Cleanup output and split
     stdout_split = stdout.decode().strip().replace("\r\n", "\n").split("\n")
 

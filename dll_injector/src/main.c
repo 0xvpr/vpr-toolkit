@@ -10,19 +10,21 @@
 
 int main(int argc, char** argv)
 {
+    const char* target_process;
+    const char* dll_path;
     unsigned time_ms = 0;
     DWORD process_id = 0;
 
     // Parse command line arguments
     int operation = ParseCommandLine(argc, argv, &time_ms);
-    const char* target_process = argv[1];
-    const char* dll_path = argv[2];
+    target_process = argv[1];
+    dll_path = argv[2];
 
     // Acquire pid
     printf("Searching for %s...\n", target_process);
     while (!process_id)
         process_id = GetProcessIdByProcessName(target_process);
-    printf("%s Found.\n\n", argv[0]);
+    printf("%s Found.\n\n", target_process);
 
     // Delay
     if (time_ms)

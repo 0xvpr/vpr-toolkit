@@ -15,7 +15,7 @@ int ParseCommandLine(int argc, char** argv, unsigned* time_ms)
     if (argc < 3)
         __usage_error("Missing positional arguments", argv[0]);
 
-    while (i > 3)
+    while (i > 2)
     {
         if (argv[i][0] == '-')
         {

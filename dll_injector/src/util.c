@@ -13,8 +13,8 @@ void __usage_error(const char* msg, char* argv_0)
         " -d,\tadd delay to the injection (miliseconds)\n"
         " -i,\tspecify injection method\n\n"
         "example:\n"
-        " dll_injector32.exe calc.exe ./payload.dll -i LoadLibraryA -d 2000\n"
-        , msg, argv_0
+        " %s calc.exe ./payload.dll -i LoadLibraryA -d 2000\n"
+        , msg, argv_0, argv_0
     );
 
     exit(1);

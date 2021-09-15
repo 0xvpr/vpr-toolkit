@@ -1,0 +1,7 @@
+# Exclude compiled files
+*.a
+*.o
+*.so
+*.obj
+*.dll
+*.lib

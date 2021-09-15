@@ -23,6 +23,8 @@ def convert_ascii_to_dec(args: List[str]) -> List[str]:
 def display_usage(exit_code: int) -> NoReturn:
     if exit_code == 1:
         sys.stderr.write(f"Usage: {sys.argv[0]} \"Text_1\" \"Text_2\" ...")
+    
+    sys.exit(exit_code)
 
 if __name__ == "__main__":
     try:
@@ -31,7 +33,6 @@ if __name__ == "__main__":
         results = convert_ascii_to_dec(args)
     except:
         display_usage(1)
-        sys.exit(1)
 
     for result in results:
         print(result)

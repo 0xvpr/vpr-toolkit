@@ -3,7 +3,7 @@
 """
 Author:   VPR
 Created:  September 12, 2021
-Modified: September 14, 2021
+Modified: September 15, 2021
 """
 
 import sys
@@ -33,6 +33,7 @@ def display_usage(exit_code: int) -> NoReturn:
         sys.stderr.write(f"Not enough bytes in file")
 
     sys.stderr.write(f"Exited with exit code: {exit_code}.")
+    sys.exit(exit_code)
 
 if __name__ == "__main__":
     img_path = ""
@@ -44,7 +45,6 @@ if __name__ == "__main__":
         img_name = img_path.split('/')[-1].strip().replace('.', '_')
     except:
         display_usage(1)
-        sys.exit(1)
 
     try:
         with open(img_path, "rb") as f:
@@ -52,7 +52,6 @@ if __name__ == "__main__":
             assert (len(img_bytes) > 1)
     except:
         display_usage(2)
-        sys.exit(2)
 
     result = convert_img_to_cstr(img_name, img_bytes)
     print(result)

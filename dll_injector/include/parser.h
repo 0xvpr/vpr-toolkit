@@ -5,6 +5,6 @@
 #define INJECT_MANUAL_MAP     0x00000002
 #define INJECT_ADD_DELAY      0x00000004
 
-int ParseCommandLine(int argc, char** argv, unsigned* time_ms, int* repeat);
+int ParseCommandLine(int argc, char** argv, unsigned* time_ms);
 
 #endif /* _PARSER_H */

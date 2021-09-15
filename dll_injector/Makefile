@@ -3,7 +3,7 @@
 TARGET=dll_injector
 
 CC=-w64-mingw32-gcc
-CFLAGS=-Wall -Werror -Wextra -O2 -s \
+CFLAGS=-std=c99 -Wall -Werror -Wextra -O2 -s \
 	   -Wno-unused-parameter
 
 CC32=$(addprefix i686, $(CC))
@@ -19,6 +19,16 @@ INCLUDES=$(addprefix -I, $(INCLUDE))
 
 all: $(TARGET)
 
-$(TARGET):
+$(TARGET): $(OBJ) $(BIN)
 	$(CC32) $(CFLAGS) $(SRCS) $(INCLUDES) -o $(BIN)/$(TARGET)32.exe
 	$(CC64) $(CFLAGS) $(SRCS) $(INCLUDES) -o $(BIN)/$(TARGET)64.exe
+
+$(OBJ):
+	mkdir -p $@
+
+$(BIN):
+	mkdir -p $@
+
+clean:
+	rm $(OBJ)/*
+	rm $(BIN)/*

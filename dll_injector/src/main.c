@@ -8,18 +8,17 @@
 #include "parser.h"
 #include <stdio.h>
 
-int main(int argc, char* argv[])
+int main(int argc, char** argv)
 {
     unsigned time_ms = 0;
-    int repeat = 0;
+    DWORD process_id = 0;
 
     // Parse command line arguments
-    int operation = ParseCommandLine(argc, argv, &time_ms, &repeat);
+    int operation = ParseCommandLine(argc, argv, &time_ms);
     const char* target_process = argv[1];
     const char* dll_path = argv[2];
 
     // Acquire pid
-    DWORD process_id = 0;
     printf("Searching for %s...\n", target_process);
     while (!process_id)
         process_id = GetProcessIdByProcessName(target_process);

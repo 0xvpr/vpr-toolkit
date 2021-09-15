@@ -7,17 +7,15 @@
 #include <windows.h>
 #include <stdio.h>
 
-int ParseCommandLine(int argc, char* argv[], unsigned* time_ms, int* repeat)
+int ParseCommandLine(int argc, char** argv, unsigned* time_ms)
 {
     int operation = 0;
+    int i = argc-1;
 
     if (argc < 3)
-    {
-        __usage_error("Wrong number of arguments", argv[0]);
-    }
+        __usage_error("Missing positional arguments", argv[0]);
 
-    int i = argc-1;
-    while (i > 0)
+    while (i > 3)
     {
         if (argv[i][0] == '-')
         {
@@ -46,11 +44,6 @@ int ParseCommandLine(int argc, char* argv[], unsigned* time_ms, int* repeat)
                     else
                         __usage_error("Unsupported injection method", argv[0]);
 
-                    break;
-                }
-                case 'r':
-                {
-                    *repeat = 1;
                     break;
                 }
                 default:

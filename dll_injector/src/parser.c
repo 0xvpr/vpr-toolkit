@@ -41,6 +41,8 @@ int ParseCommandLine(int argc, char** argv, unsigned* time_ms)
                     
                     if (!strncmp(arg_to_parse, "LoadLibraryA", strlen("LoadLibraryA")))
                         operation |= INJECT_LOAD_LIBRARY_A;
+                    else if (!strncmp(arg_to_parse, "ManualMap", strlen("ManualMap")))
+                        operation |= INJECT_MANUAL_MAP;
                     else
                         __usage_error("Unsupported injection method", argv[0]);
 

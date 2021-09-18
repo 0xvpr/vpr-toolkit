@@ -18,7 +18,9 @@ DWORD GetProcessIdByProcessName(const char* process_name);
 
 bool DllPathIsValid(TCHAR full_path[260]);
 
-int InjectDLL(DWORD process_id, const char* dll, int operation);
+int inject_LoadLibraryA(DWORD process_id, const char* dll);
+
+int inject_ManualMap(const char* dll_path);
 
 void __handle_error(int error_code);
 

@@ -4,7 +4,7 @@ TARGET=dll_injector
 
 CC=-w64-mingw32-gcc
 CFLAGS=-std=c99 -Wall -Werror -Wextra -O2 -s \
-	   -Wno-unused-parameter
+	   -Wno-unused-parameter -Wno-int-conversion -Wno-pointer-to-int-cast
 
 CC32=$(addprefix i686, $(CC))
 CC64=$(addprefix x86_64, $(CC))

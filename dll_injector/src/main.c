@@ -1,19 +1,22 @@
 /**
  * Author:   VPR
  * Created:  September 14, 2021
- * Modified: September 14, 2021
+ * Modified: September 17, 2021
 **/
 
+#include "manualmap.h"
 #include "injector.h"
 #include "parser.h"
 #include <stdio.h>
 
-int main(int argc, char** argv)
+int main(int argc, char* argv[])
 {
-    const char* target_process;
-    const char* dll_path;
+    int inject_status = 0;
     unsigned time_ms = 0;
     DWORD process_id = 0;
+
+    const char* dll_path;
+    const char* target_process;
 
     // Parse command line arguments
     int operation = ParseCommandLine(argc, argv, &time_ms);
@@ -33,8 +36,11 @@ int main(int argc, char** argv)
         Sleep(time_ms);
     }
 
-    // Injection
-    int inject_status = InjectDLL(process_id, dll_path, operation);
+    if (operation & INJECT_LOAD_LIBRARY_A)
+        inject_status = inject_LoadLibraryA(process_id, dll_path);
+    else if (operation & INJECT_MANUAL_MAP)
+        inject_status = inject_ManualMap(dll_path);
+
     if (inject_status)
         __handle_error(inject_status);
     printf("Injection: %s.\n", (inject_status ? "Failed" : "Successful"));

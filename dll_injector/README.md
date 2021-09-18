@@ -1,1 +1,1 @@
-# Injector 'GUI'
+# CLI Injector (LoadLibraryA & ManualMap)

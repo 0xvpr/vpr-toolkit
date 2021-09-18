@@ -20,8 +20,6 @@ typedef struct loaderdata
 
 } loaderdata;
 
-DWORD FindProcessId(const char* processName);
-
 DWORD __stdcall LibraryLoader(LPVOID Memory);
 
 DWORD __stdcall stub(void);

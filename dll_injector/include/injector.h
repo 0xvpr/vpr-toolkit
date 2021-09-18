@@ -20,7 +20,7 @@ bool DllPathIsValid(TCHAR full_path[260]);
 
 int inject_LoadLibraryA(DWORD process_id, const char* dll);
 
-int inject_ManualMap(const char* dll_path);
+int inject_ManualMap(DWORD process_id, const char* dll_path);
 
 void __handle_error(int error_code);
 

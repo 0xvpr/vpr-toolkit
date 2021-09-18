@@ -5,35 +5,6 @@
 
 #include <tlhelp32.h>
 
-DWORD FindProcessId(const char* processName)
-{
-	PROCESSENTRY32 processInfo;
-	processInfo.dwSize = sizeof(processInfo);
-
-	HANDLE processSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, NULL);
-	if (processSnapshot == INVALID_HANDLE_VALUE)
-		return 0;
-
-	Process32First(processSnapshot, &processInfo);
-	if (!strcmp(processName, processInfo.szExeFile))
-	{
-		CloseHandle(processSnapshot);
-		return processInfo.th32ProcessID;
-	}
-
-	while (Process32Next(processSnapshot, &processInfo))
-	{
-		if (!strcmp(processName, processInfo.szExeFile))
-		{
-			CloseHandle(processSnapshot);
-			return processInfo.th32ProcessID;
-		}
-	}
-
-	CloseHandle(processSnapshot);
-	return 0;
-}
-
 DWORD __stdcall LibraryLoader(LPVOID Memory)
 {
 
@@ -113,7 +84,6 @@ DWORD __stdcall LibraryLoader(LPVOID Memory)
 	}
 	return TRUE;
 }
-
 
 DWORD __stdcall stub(void)
 {

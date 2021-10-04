@@ -1,0 +1,3 @@
+[submodule "payload-injector"]
+	path = payload-injector
+	url = git://github.com/0xvpr/payload-injector.git

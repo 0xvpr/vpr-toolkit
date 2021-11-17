@@ -2,13 +2,13 @@
 A collection of various tools & utilities related to security research
 
 ### List of tools
-- Payload Injector
-- Raw byte to C String converter
-- ASCII to Decimal converter
-- Clipboard pasting utility
+- payload\_injector.exe Payload Injector (Windows)
+- bin2fmt: Binary to format
+- ascii2dec: ASCII to Decimal
+- Prettypaste: Clipboard pasting utility
 
 #### TODO
 - Demos
-    - [ ] byte2cstr
+    - [ ] bin2fmt
     - [ ] ascii2dec
     - [ ] prettypaste

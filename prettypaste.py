@@ -10,13 +10,11 @@ Version: 0.5
 
 import os
 import sys
-import argparse
 import platform
 import subprocess
 
 from typing import List
 from typing import Tuple
-from typing import NoReturn
 from argparse import Namespace
 from argparse import ArgumentParser
 
@@ -130,7 +128,7 @@ def get_clipboard_contents(arch: str, operations: int) -> List[str]:
 
     return stdout_split
 
-def execute_operations(stdout_split: List[str], args: ArgumentParser) -> NoReturn:
+def execute_operations(stdout_split: List[str], args: ArgumentParser) -> None:
     if operations & OP_DELIMITER:
         new_stdout = [ ]
 

@@ -5,3 +5,6 @@
 *.obj
 *.dll
 *.lib
+
+# Folders
+src

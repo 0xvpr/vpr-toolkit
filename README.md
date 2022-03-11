@@ -1,6 +1,6 @@
 # VPR's Toolkit
 A collection of various tools & utilities related to security research,  
-payload creation, and malware analysis.
+reverse engineering, and malware analysis.
 
 ### Table of Contents
 - [Binary Injection and Modification](#binary-injection-and-modification)

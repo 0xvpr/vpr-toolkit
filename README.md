@@ -10,11 +10,12 @@ reverse engineering, and malware analysis.
 |Name|Description|Link|
 |----|-----------|----|
 |omega-zero|A program to remove section-header information from 32/64 bit ELF and PE32 executables.|https://github.com/0xvpr/vpr-omega-zero|
+|midas|A program to modify datetime information of a given file(s).|https://github.com/0xvpr/vpr-midas|
 |Pidjeon|A command line payload injector for 32 & 64 bit Windows applications.|https://github.com/0xvpr/Pidjeon|
 
 ## Formatting
 |Name|Description|Link|
 |----|-----------|----|
 |bin2fmt|A utility program to convert binary data to a formatted string of the user's choice.|https://github.com/0xvpr/vpr-bin2fmt|
-|xtract| A utility program to rip sections of Position Independent Code (PIC) and output them to a desired file.|https://github.com/0xvpr/vpr-xtract|
-|ppaste| A utility program build to format the user's current clipboard into a more managable format|https://github.com/0xvpr/vpr-ppaste|
+|xtract(TODO)| A utility program to rip sections of Position Independent Code (PIC) and output them to a desired file.|https://github.com/0xvpr/vpr-xtract|
+|ppaste(TODO)| A utility program build to format the user's current clipboard into a more managable format|https://github.com/0xvpr/vpr-ppaste|

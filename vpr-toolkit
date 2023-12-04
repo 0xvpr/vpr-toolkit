@@ -1,0 +1,158 @@
+#!/usr/bin/env python3
+
+# Created by:       VPR
+# Created:          May 6th, 2023
+
+# Updated by:       VPR
+# Updated:          December 2nd, 2023
+
+import argparse
+import os
+
+from pathlib import PurePath
+
+from enum import Enum
+from dataclasses import dataclass
+
+from typing import List
+
+class ToolType(Enum):
+    binary   = ( 1 << 0 )
+    script   = ( 1 << 1 )
+    template = ( 1 << 2 )
+
+@dataclass
+class Tool(object):
+    _project_url     :    str
+    _type            :    ToolType
+
+tool_kit = {
+    "vpr-shell-shock" : ToolType.template,
+    "vpr-omega-zero"  : ToolType.binary,
+    "vpr-overwatch"   : ToolType.binary,
+    "vpr-pidjeon"     : ToolType.binary,
+    "vpr-extract"     : ToolType.binary,
+    "vpr-bin2fmt"     : ToolType.binary,
+    "vpr-midas"       : ToolType.binary,
+}
+
+def download_tool(path: str, target: str) -> int:
+    """
+    Perform the download of a tool without installing.
+    """
+
+    return os.system(f"git clone https://github.com/0xvpr/{target} {path}/{target}")
+
+def install_all_tools(path: str) -> int:
+    """
+    Perform the installation of the binary(ies) of a tool, adding the download files to path.
+    """
+
+    for tool, tool_type in tool_kit:
+        rv = 0
+        # Download latest binaries
+        if tool_type == ToolType.binary or tool == ToolType.script:
+            rv = os.system(f"curl -LJO --output-dir {path} $(curl -s https://api.github.com/repos/0xvpr/{tool}/releases/latest | grep 'browser_download_url' | cut -d '\"' -f 4)")
+        elif tool_type == ToolType.template:
+            rv = os.system(f"git clone https://github.com/0xvpr/{tool} {path}/{tool}")
+
+        if rv != 0:
+            exit(1) # TODO message
+
+    return 0
+
+def parse_args() -> argparse.Namespace:
+    args = argparse.ArgumentParser()
+
+    args.add_argument(
+        "-p",
+        "--toolkit-path",
+        dest="toolkit_path",
+        default="~/.vpr-toolkit",
+        type=str,
+        help="Path to install tools. (defaults to ~/.vpr-toolkit"
+    )
+
+    args.add_argument(
+        "-i",
+        "--install",
+        dest="installables",
+        action="append",
+        type=str,
+        help=""
+    )
+
+    args.add_argument(
+        "--install-all",
+        dest="install_all",
+        action="store_true",
+        default=False,
+        help=""
+    )
+
+    args.add_argument(
+        "--build",
+        dest="buildables",
+        action="append",
+        type=str,
+        help=f"Download and compile tool into target directory"
+    )
+
+    args.add_argument(
+        "--build-all",
+        dest="build_all",
+        action="store_true",
+        default=False,
+        help="Download and compile all tools into target directory"
+    )
+
+    args.add_argument(
+        "-d",
+        "--download",
+        dest="downloadables",
+        action="append",
+        type=str,
+        help="Download tool from Github without compiling"
+    )
+
+    args.add_argument(
+        "--download-all",
+        dest="download_all",
+        action="store_true",
+        default=True,
+        help="Download all tools from Github without compiling"
+    )
+
+    return args.parse_args()
+
+if __name__ == "__main__":
+    # Handle arguments
+    args = parse_args()
+
+    # Set toolkit dir
+    toolkit_path = args.toolkit_path
+    
+    # Create toolkit directory
+    if not PurePath(f"toolkit_path"):
+        # leave a message TODO
+        os.system(f"mkdir -p {toolkit_path}")
+
+    # Installs
+    if args.installables:
+        args.install_all = False
+
+        for target in args.installables:
+            download_tool(args.toolkit_path, target)
+    elif args.install_all:
+        install_all_tools(args.toolkit_path)
+
+    # Downloads
+    if args.downloadables:
+        args.download_all = False
+
+        for target in args.downloadables:
+            download_tool(args.toolkit_path, target)
+    elif args.download_all:
+        ...
+
+    # download_toolkit()

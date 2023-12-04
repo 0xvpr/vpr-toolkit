@@ -2,6 +2,9 @@
 A collection of various tools & utilities related to security research,  
 reverse engineering, and malware analysis.
 
+### How to use
+[ TODO ]
+
 ### Table of Contents
 - [Templates](#templates)
 - [Binary Injection and Modification](#binary-injection-and-modification)

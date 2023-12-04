@@ -3,7 +3,9 @@ A collection of various tools & utilities related to security research,
 reverse engineering, and malware analysis.
 
 ### How to use
-[ TODO ]
+```bash
+curl -LSso- https://raw.githubusercontent.com/0xvpr/vpr-toolkit/main/vpr-toolkit | python3 - -p ./toolkit -i vpr-omega-zero
+```
 
 ### Table of Contents
 - [Templates](#templates)

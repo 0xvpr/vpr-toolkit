@@ -4,19 +4,22 @@
 # Created:          May 6th, 2023
 
 # Updated by:       VPR
-# Updated:          December  5th, 2023
+# Updated:          December  6th, 2023
 
+__author__  = "VPR"
 __version__ = "1.0.1"
 
+import subprocess
 import argparse
+import sys
 import os
 
-from pathlib import Path, PurePath
+from pathlib import Path
 
 from enum import Enum
 from dataclasses import dataclass
 
-# from typing import List
+from typing import Tuple
 
 class ToolType(Enum):
     none         =  0
@@ -46,16 +49,49 @@ class Tool(object):
 TOOLKIT = dict[str, Tool]({
     "vpr-shell-shock" : Tool( ToolType.template, BuildSystem.none  ),
     "vpr-omega-zero"  : Tool( ToolType.binary,   BuildSystem.cmake ),
-    "vpr-overwatch"   : Tool( ToolType.binary,   BuildSystem.make  ),
+    "vpr-overwatch"   : Tool( ToolType.binary,   BuildSystem.cmake ),
     "vpr-pidjeon"     : Tool( ToolType.binary,   BuildSystem.make  ),
-    "vpr-extract"     : Tool( ToolType.binary,   BuildSystem.make  ),
+    "vpr-extract"     : Tool( ToolType.binary,   BuildSystem.cmake ),
     "vpr-bin2fmt"     : Tool( ToolType.binary,   BuildSystem.cmake ),
     "vpr-midas"       : Tool( ToolType.binary,   BuildSystem.cmake ),
 })
 
+def check_installed(program: str) -> Tuple[bool, str]:
+    """
+    Check if a program is installed on the Unix system.
+
+    Args:
+    program (str):      The name of the program to check.
+
+    Returns:
+    Tuple[bool, str]:   A tuple containing a boolean indicating if the program
+                        is installed, and a string with the version info or
+                        error message.
+    """
+
+    try:
+        result = subprocess.run(
+            [program, "--version"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=True
+        )
+
+        return (True, result.stdout.strip())
+    except subprocess.CalledProcessError as e:
+        return (False, e.stderr.strip())
+
 def download_tool(path: str, target: str) -> None:
     """
     Perform the download of a tool without installing or building.
+
+    Args:
+    path (str):         The directory to download the target tool. 
+    target (str):       The name of the tool.
+
+    Returns:
+    None
     """
 
     rv = 0
@@ -64,40 +100,49 @@ def download_tool(path: str, target: str) -> None:
     else:
         rv = os.system(f"( cd {path}/{target} && git pull origin main )")
     if rv != 0:
-        exit(rv)
+        exit(1)
 
     return
 
 def build_tool(path: str, target: str) -> None:
     """
-    Perform the download of a tool and install using the appropriate build system.
+    Perform the download of a tool and build using the appropriate build system.
+
+    Args:
+    path (str):         The directory to download and build the target tool. 
+    target (str):       The name of the tool.
+
+    Returns:
+    None
     """
 
     if TOOLKIT[target] == ToolType.binary:
         download_tool(path, target)
     else:
-        # TODO
-        # error message: wrong type
+        sys.stderr.write(f"Error: {target} is not a binary. Nothing to build.\n")
         exit(1)
 
     rv = 0
-    # TODO
-    # Check for appropriate build systems
-    # Leave a message requiring installation of required build systems
     if TOOLKIT[target] == BuildSystem.make:
         rv = os.system(f"make -C {path}/{target}")
     elif TOOLKIT[target] == BuildSystem.cmake:
-        rv = os.system(
-            f"( cd {path}/{target} && cmake -B build && cmake --build build )"
-        )
+        rv = os.system(f"( cd {path}/{target} && cmake -B build && cmake --build build )")
     if rv != 0:
-        exit(rv)
+        exit(1)
 
     return
 
 def install_tool(path: str, target: str) -> None:
     """
     Perform the installation of the binary(ies) of a tool, adding the download files to path.
+
+    Args:
+    program (str):      The name of the program to check.
+
+    Returns:
+    Tuple[bool, str]:   A tuple containing a boolean indicating if the program
+                        is installed, and a string with the version info or
+                        error message.
     """
 
     rv = 0
@@ -107,26 +152,30 @@ def install_tool(path: str, target: str) -> None:
         rv = os.system(f"git clone https://github.com/0xvpr/{target} {path}/{target}")
 
     if rv != 0:
-        exit(rv) # TODO message
+        exit(1) # TODO message
 
     return
 
 def build_all_tools(path: str) -> None:
     """
     Perform the download of all tools and install using the appropriate build system.
+
+    Args:
+    program (str):      The name of the program to check.
+
+    Returns:
+    Tuple[bool, str]:   A tuple containing a boolean indicating if the program
+                        is installed, and a string with the version info or
+                        error message.
     """
 
     for target, tool in TOOLKIT.items():
         print(tool)
 
         rv = 0
-        # Download latest binaries
         if tool.tool_type == ToolType.binary:
             download_tool(path, target)
 
-        # TODO
-        # Check for appropriate build systems
-        # Leave a message requiring installation of required build systems
         if tool.build_system == BuildSystem.make:
             rv = os.system(f"make -C {path}/{target}")
         elif tool.build_system == BuildSystem.cmake:
@@ -135,16 +184,24 @@ def build_all_tools(path: str) -> None:
             )
 
         if rv != 0:
-            exit(rv)
+            exit(1)
 
     return
 
 def install_all_tools(path: str) -> None:
     """
     Perform the installation of the binary(ies) of a tool, adding the download files to path.
+
+    Args:
+    program (str):      The name of the program to check.
+
+    Returns:
+    Tuple[bool, str]:   A tuple containing a boolean indicating if the program
+                        is installed, and a string with the version info or
+                        error message.
     """
 
-    for tool, ( tool_type, build_system ) in TOOLKIT:
+    for tool, ( tool_type, _ ) in TOOLKIT:
         rv = 0
         # Download latest binaries
         if tool_type == ToolType.binary or tool == ToolType.script:
@@ -153,12 +210,21 @@ def install_all_tools(path: str) -> None:
             rv = os.system(f"git clone https://github.com/0xvpr/{tool} {path}/{tool}")
 
         if rv != 0:
-            exit(1) # TODO message
+            sys.stderr.write("") # TODO
+            exit(1)
 
     return
 
 def parse_args() -> argparse.Namespace:
     args = argparse.ArgumentParser()
+
+    args.add_argument(
+        "-v",
+        "--version",
+        dest="version",
+        action="store_true",
+        help=f"Display current version: {__version__}"
+    )
 
     args.add_argument(
         "-p",
@@ -223,22 +289,32 @@ def parse_args() -> argparse.Namespace:
     return args.parse_args()
 
 if __name__ == "__main__":
-    # TODO
-    # Assert that the required tools are installed :
-    # git, curl, make, cmake
+    required_binaries = [
+        "git",
+        "curl",
+        "make",
+        "cmake",
+    ]
+
+    for binary in required_binaries:
+        found, err = check_installed(binary)
+        if not found:
+            sys.stderr.write(f"Error: {err}\n\nPlease install the latest version of {binary}.\n")
+            exit(1)
 
     # Handle arguments
     args = parse_args()
 
-    # if VERSION is specified, set version and exit
+    if args.version:
+        sys.stderr.write(f"vpr-toolkit version: {__version__}\n")
 
     # Set toolkit dir
     toolkit_path = Path(args.toolkit_path)
     
     # Create toolkit directory
     if not toolkit_path.exists():
-        # leave a message TODO
-        os.system(f"mkdir {toolkit_path}")
+        sys.stderr.write(f"{toolkit_path} does not exist. Creating '{toolkit_path.absolute()}'...\n")
+        os.mkdir(toolkit_path)
 
     # Builds
     if args.buildables:
@@ -266,5 +342,4 @@ if __name__ == "__main__":
             download_tool(args.toolkit_path, target)
     elif args.download_all:
         ...
-
-    # download_toolkit()
+        # download_all_tools(args.toolkit_path)

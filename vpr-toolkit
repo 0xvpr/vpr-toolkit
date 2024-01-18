@@ -78,11 +78,11 @@ def check_installed(program: str) -> Tuple[bool, str]:
             check=True
         )
 
-        return (True, result.stdout.strip())
+        return (True, result.stderr.strip())
     except subprocess.CalledProcessError as e:
         return (False, e.stderr.strip())
 
-def download_tool(path: str, target: str) -> None:
+def download_tool(path: str, target: str) -> Tuple[bool,str]:
     """
     Perform the download of a tool without installing or building.
 
@@ -94,15 +94,36 @@ def download_tool(path: str, target: str) -> None:
     None
     """
 
-    rv = 0
     if not Path(f"{path}/{target}").exists():
-        rv = os.system(f"git clone https://github.com/0xvpr/{target} {path}/{target}")
-    else:
-        rv = os.system(f"( cd {path}/{target} && git pull origin main )")
-    if rv != 0:
-        exit(1)
+        try:
+            result = subprocess.run(
+                ["git", "clone", f"https://github.com/0xvpr/{target}", f"{path}/{target}"],
+                # stdout=subprocess.PIPE,
+                # stderr=subprocess.PIPE,
+                # text=True,
+                # check=True
+            )
 
-    return
+            print(result.stdout.strip())
+        except subprocess.CalledProcessError as e:
+            print(e)
+    else:
+        try:
+            os.chdir(f"{path}/{target}")
+            result = subprocess.run(
+                [ "git", "pull", "origin", "main" ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                check=True
+            )
+            os.chdir("..")
+
+            return (True, result.stdout.strip())
+        except subprocess.CalledProcessError as e:
+            print(e)
+
+    return ( False, "" )
 
 def build_tool(path: str, target: str) -> None:
     """
@@ -137,12 +158,11 @@ def install_tool(path: str, target: str) -> None:
     Perform the installation of the binary(ies) of a tool, adding the download files to path.
 
     Args:
-    program (str):      The name of the program to check.
+    path (str):         The directory to install the target tool. 
+    target (str):       The name of the tool.
 
     Returns:
-    Tuple[bool, str]:   A tuple containing a boolean indicating if the program
-                        is installed, and a string with the version info or
-                        error message.
+    None
     """
 
     rv = 0
@@ -161,12 +181,10 @@ def build_all_tools(path: str) -> None:
     Perform the download of all tools and install using the appropriate build system.
 
     Args:
-    program (str):      The name of the program to check.
+    path (str):         The directory to install the target tool. 
 
     Returns:
-    Tuple[bool, str]:   A tuple containing a boolean indicating if the program
-                        is installed, and a string with the version info or
-                        error message.
+    None
     """
 
     for target, tool in TOOLKIT.items():
@@ -193,12 +211,10 @@ def install_all_tools(path: str) -> None:
     Perform the installation of the binary(ies) of a tool, adding the download files to path.
 
     Args:
-    program (str):      The name of the program to check.
+    path (str):         The directory to install all tools. 
 
     Returns:
-    Tuple[bool, str]:   A tuple containing a boolean indicating if the program
-                        is installed, and a string with the version info or
-                        error message.
+    None
     """
 
     for tool, ( tool_type, _ ) in TOOLKIT:
@@ -313,7 +329,7 @@ if __name__ == "__main__":
     
     # Create toolkit directory
     if not toolkit_path.exists():
-        sys.stderr.write(f"{toolkit_path} does not exist. Creating '{toolkit_path.absolute()}'...\n")
+        sys.stderr.write(f"'{toolkit_path}' does not exist.\nCreating '{toolkit_path.absolute()}'...\n")
         os.mkdir(toolkit_path)
 
     # Builds

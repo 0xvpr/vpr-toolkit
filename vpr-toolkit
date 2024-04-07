@@ -4,7 +4,7 @@
 # Created:          May 6th, 2023
 
 # Updated by:       VPR
-# Updated:          December  6th, 2023
+# Updated:          April 04th, 2024
 
 __author__  = "VPR"
 __version__ = "1.0.1"
@@ -19,13 +19,16 @@ from pathlib import Path
 from enum import Enum
 from dataclasses import dataclass
 
-from typing import Tuple
+from typing import (
+    List,
+    Tuple
+)
 
 class ToolType(Enum):
     none         =  0
     binary       =  1
     script       =  2
-    template     =  3
+    header       =  3
 
 class BuildSystem(Enum):
     none         =  0 
@@ -47,13 +50,21 @@ class Tool(object):
         return False
 
 TOOLKIT = dict[str, Tool]({
-    "vpr-shell-shock" : Tool( ToolType.template, BuildSystem.none  ),
+    "vpr-shell-shock" : Tool( ToolType.header,   BuildSystem.none  ),
+    "vpr-deviate"     : Tool( ToolType.header,   BuildSystem.none  ),
+    "vpr-vprnet"      : Tool( ToolType.header,   BuildSystem.none  ),
     "vpr-omega-zero"  : Tool( ToolType.binary,   BuildSystem.cmake ),
     "vpr-overwatch"   : Tool( ToolType.binary,   BuildSystem.cmake ),
     "vpr-pidjeon"     : Tool( ToolType.binary,   BuildSystem.make  ),
     "vpr-extract"     : Tool( ToolType.binary,   BuildSystem.cmake ),
     "vpr-bin2fmt"     : Tool( ToolType.binary,   BuildSystem.cmake ),
     "vpr-midas"       : Tool( ToolType.binary,   BuildSystem.cmake ),
+})
+
+HEADER_FILES = dict[str, List[str]]({
+    "vpr-shell-shock" : [ "shellshock.h" ],
+    "vpr-deviate"     : [ "deviate.h"    ],
+    "vpr-vprnet"      : [ "vprnet.hpp"   ],
 })
 
 def check_installed(program: str) -> Tuple[bool, str]:
@@ -153,7 +164,7 @@ def build_tool(path: str, target: str) -> None:
 
     return
 
-def install_tool(path: str, target: str) -> None:
+def install_tool(path: str, target: str) -> Tuple[bool,str]:
     """
     Perform the installation of the binary(ies) of a tool, adding the download files to path.
 
@@ -168,13 +179,22 @@ def install_tool(path: str, target: str) -> None:
     rv = 0
     if TOOLKIT[target] == ToolType.binary or TOOLKIT[target] == ToolType.script:
         rv = os.system(f"curl -LJO --output-dir {path} $(curl -s https://api.github.com/repos/0xvpr/{target}/releases/latest | grep 'browser_download_url' | cut -d '\"' -f 4)")
-    elif TOOLKIT[target] == ToolType.template:
-        rv = os.system(f"git clone https://github.com/0xvpr/{target} {path}/{target}")
+    elif TOOLKIT[target] == ToolType.header:
+        try:
+            os.mkdir("vpr") if not Path("vpr").is_dir() else None # create header directory
+            for header in HEADER_FILES[target]:
+                result = subprocess.run(
+                    [ "curl", "-LSso", f"vpr/{header}", f"https://raw.githubusercontent.com/0xvpr/{target}/main/vpr/{header}" ],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                    check=True
+                )
 
-    if rv != 0:
-        exit(1) # TODO message
+        except subprocess.CalledProcessError as e:
+            ...
 
-    return
+    return (False, "idk")
 
 def build_all_tools(path: str) -> None:
     """
@@ -222,7 +242,7 @@ def install_all_tools(path: str) -> None:
         # Download latest binaries
         if tool_type == ToolType.binary or tool == ToolType.script:
             rv = os.system(f"curl -LJO --output-dir {path} $(curl -s https://api.github.com/repos/0xvpr/{tool}/releases/latest | grep 'browser_download_url' | cut -d '\"' -f 4)")
-        elif tool_type == ToolType.template:
+        elif tool_type == ToolType.header:
             rv = os.system(f"git clone https://github.com/0xvpr/{tool} {path}/{tool}")
 
         if rv != 0:
@@ -246,7 +266,7 @@ def parse_args() -> argparse.Namespace:
         "-p",
         "--toolkit-path",
         dest="toolkit_path",
-        default="~/.vpr-toolkit",
+        default=f"{os.environ['HOME']}/.vpr-toolkit",
         type=str,
         help="Path to install tools. (defaults to ~/.vpr-toolkit)"
     )
@@ -331,6 +351,9 @@ if __name__ == "__main__":
     if not toolkit_path.exists():
         sys.stderr.write(f"'{toolkit_path}' does not exist.\nCreating '{toolkit_path.absolute()}'...\n")
         os.mkdir(toolkit_path)
+
+    # cd into toolkit path
+    os.chdir(toolkit_path)
 
     # Builds
     if args.buildables:

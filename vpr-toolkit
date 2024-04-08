@@ -52,7 +52,7 @@ class Tool(object):
 TOOLKIT = dict[str, Tool]({
     "vpr-shell-shock" : Tool( ToolType.header,   BuildSystem.none  ),
     "vpr-deviate"     : Tool( ToolType.header,   BuildSystem.none  ),
-    "vpr-vprnet"      : Tool( ToolType.header,   BuildSystem.none  ),
+    "vpr-net"         : Tool( ToolType.header,   BuildSystem.none  ),
     "vpr-omega-zero"  : Tool( ToolType.binary,   BuildSystem.cmake ),
     "vpr-overwatch"   : Tool( ToolType.binary,   BuildSystem.cmake ),
     "vpr-pidjeon"     : Tool( ToolType.binary,   BuildSystem.make  ),
@@ -64,7 +64,7 @@ TOOLKIT = dict[str, Tool]({
 HEADER_FILES = dict[str, List[str]]({
     "vpr-shell-shock" : [ "shellshock.h" ],
     "vpr-deviate"     : [ "deviate.h"    ],
-    "vpr-vprnet"      : [ "vprnet.hpp"   ],
+    "vpr-net"         : [ "vprnet.hpp"   ],
 })
 
 def check_installed(program: str) -> Tuple[bool, str]:

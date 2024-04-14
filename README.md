@@ -8,12 +8,12 @@ curl -LSso- https://raw.githubusercontent.com/0xvpr/vpr-toolkit/main/vpr-toolkit
 ```
 
 ### Table of Contents
-- [Templates](#templates)
+- [Header Only Libraries](#header-only-libraries)
 - [Binary Injection and Modification](#binary-injection-and-modification)
 - [Utility](#utility)
 - [Formatting](#formatting)
 
-## Templates
+## Header Only Libraries
 |Name|Description|Link|
 |----|-----------|----|
 |shell-shock|A C++20 compatible header only library capable of creating position independent shellcode.|https://github.com/0xvpr/vpr-shell-shock|
